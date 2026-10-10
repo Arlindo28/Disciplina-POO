@@ -64,6 +64,33 @@ Informações relevantes para um livro: título, autor, ISBN, editora, ano de pu
 A classe Livro é uma abstração porque representa apenas as características e comportamentos do livro real que importam para o sistema da biblioteca. Detalhes como a cor da capa, o tipo de papel ou o peso são ignorados, pois não fazem diferença para emprestar, devolver ou buscar livros. Abstrair é justamente isso: selecionar o essencial de uma entidade do mundo real para o contexto do problema.
 Métodos que fazem sentido: emprestar(), que marca o livro como emprestado se estiver disponível; devolver(), que o torna disponível novamente; estaDisponivel(), que retorna se há exemplar para empréstimo; e exibirInfo(), que mostra os dados do livro. Também poderia existir reservar().
 
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Lista 3
+
+Questão 4
+
+a) Alocação de memória
+
+Em Java, o array é sempre um objeto e fica no heap. A variável local (int[] v) guarda apenas uma referência para ele. A diferença está no que cada posição armazena.
+
+Array de primitivos (int[] v = new int[5]): as posições guardam os próprios valores, um ao lado do outro, num único bloco. A JVM inicializa tudo com o valor padrão do tipo: 0 para int, 0.0 para double e false para boolean. Ao terminar o new, o array já está pronto para uso.
+Array de objetos (Aluno[] a = new Aluno[5]): as posições guardam referências e começam todas como null. O new Aluno[5] não cria nenhum Aluno, apenas cinco espaços vazios. Cada objeto precisa ser criado depois (a[0] = new Aluno(...)) e fica em outro lugar do heap. Por isso a memória total é a do array de referências mais a de cada objeto apontado.
+
+Isso também muda o efeito da cópia. Em int x = v[0], o valor é copiado. Em Aluno x = a[0], quem é copiada é a referência, então x e a[0] passam a apontar para o mesmo objeto, e qualquer alteração feita por x aparece em a[0].
+
+
+b) Cuidados ao acessar elementos de um array de objetos
+
+NullPointerException: uma posição que nunca recebeu um objeto vale null. Chamar um método nela (a[3].calcularMedia()) derruba o programa. É preciso verificar if (a[i] != null) ou controlar quantas posições estão ocupadas. A classe Turma faz isso com o contador quantidadeAlunos e só percorre até ele, não até alunos.length.
+
+Limites do índice: acessar a[a.length] ou um índice negativo lança ArrayIndexOutOfBoundsException. Isso vale para os dois tipos de array.
+
+Referências compartilhadas: como o array guarda referências, colocar o mesmo objeto em duas posições, ou devolver o array diretamente num getter, permite que outro código altere os objetos por fora. Quando for preciso proteger os dados, devolva uma cópia.
+
+Comparação: use equals() para comparar o conteúdo de dois objetos. O operador == só diz se duas referências apontam para o mesmo objeto.
+Tamanho fixo: o array não cresce sozinho. Se a quantidade de elementos puder variar, um ArrayList<Aluno> costuma ser mais adequado.
+
 
 
 
