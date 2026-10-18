@@ -91,6 +91,47 @@ Referências compartilhadas: como o array guarda referências, colocar o mesmo o
 Comparação: use equals() para comparar o conteúdo de dois objetos. O operador == só diz se duas referências apontam para o mesmo objeto.
 Tamanho fixo: o array não cresce sozinho. Se a quantidade de elementos puder variar, um ArrayList<Aluno> costuma ser mais adequado.
 
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Lista 4
+
+Questão 1 
+
+Verdadeira. Construtores não são herdados. A subclasse precisa declarar seus próprios construtores e, dentro deles, chamar o da superclasse com super(...).
+
+Falsa. Herança implementa o relacionamento “é um” (um Pix é um Pagamento). O relacionamento “tem um” é implementado por composição: um objeto contém referências a outros objetos como atributos. Por exemplo, um Carro tem um Motor.
+
+Falsa. Redefinir um método com a mesma assinatura é sobrescrever (override). Sobrecarregar (overload) é declarar métodos com o mesmo nome e listas de parâmetros diferentes, normalmente na mesma classe.
+
+
+Questão 2 
+
+A favor de protected:
+
+A subclasse acessa o atributo diretamente, sem passar por get/set. Isso deixa o código mais curto e evita o custo, pequeno, de chamar métodos.
+É útil quando a superclasse foi projetada de propósito para ser estendida e expõe “ganchos” para as subclasses.
+
+Contra protected (a favor de private):
+
+Acoplamento: as subclasses passam a depender da implementação interna da superclasse. Se você renomear ou mudar o tipo de um campo, todas as subclasses quebram (o problema da classe base frágil).
+Perda de validação: a subclasse pode atribuir valores inválidos diretamente, contornando as regras que um set faria cumprir. Por exemplo, ela poderia colocar um saldo negativo.
+Exposição maior do que parece: em Java, protected também dá acesso a todas as classes do mesmo pacote, não só às subclasses.
+
+Conclusão: a boa prática é usar atributos private e oferecer métodos protected ou public quando a subclasse precisar de acesso. Assim a superclasse mantém o controle do próprio estado e pode mudar sua implementação sem afetar as subclasses. Nos códigos das questões 4 e 5, descricao, nome e vida são private, e só o método auxiliar imprimirResumo é protected.
+
+
+Questão 3 
+
+Quando você instancia uma subclasse, o construtor dela começa chamando o construtor da superclasse direta. Essa chamada pode ser:
+
+explícita: com super(args), que deve ser a primeira instrução do construtor;
+implícita: se você não escrever nada, o compilador insere super(). Nesse caso, se a superclasse não tiver um construtor sem argumentos, ocorre erro de compilação.
+
+Isso se repete subindo a hierarquia até Object. Por isso a execução dos corpos acontece de cima para baixo: primeiro termina o construtor de Object, depois o de Personagem e, por último, o de Guerreiro.
+
+Por que é obrigatório: o objeto da subclasse contém a parte da superclasse, ou seja, os atributos herdados. Só a superclasse sabe inicializar corretamente esses atributos, principalmente os private, que a subclasse nem enxerga. Se a superclasse não fosse construída antes, a subclasse poderia usar um estado herdado inválido ou não inicializado.
+
+
 
 
 
