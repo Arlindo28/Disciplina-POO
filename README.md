@@ -131,7 +131,48 @@ Isso se repete subindo a hierarquia até Object. Por isso a execução dos corpo
 
 Por que é obrigatório: o objeto da subclasse contém a parte da superclasse, ou seja, os atributos herdados. Só a superclasse sabe inicializar corretamente esses atributos, principalmente os private, que a subclasse nem enxerga. Se a superclasse não fosse construída antes, a subclasse poderia usar um estado herdado inválido ou não inicializado.
 
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+Lista 5
+
+Questão 1
+
+Os métodos com corpo (default e static) entraram nas interfaces no Java 8, em 2014. O Java 9 acrescentou também os métodos private, que servem para reaproveitar código entre os métodos default da mesma interface.
+
+Métodos default permitem acrescentar um método novo a uma interface sem quebrar as classes que já a implementam, porque elas herdam a implementação padrão e podem sobrescrevê-la se quiserem. Esse foi o motivo principal da mudança. O Java 8 precisava adicionar forEach() e stream() em Collection/Iterable sem obrigar milhões de classes já existentes a implementarem esses métodos. Por exemplo, List.sort() e Iterable.forEach() são métodos default.
+Métodos static guardam funções utilitárias ligadas à interface dentro da própria interface, em vez de criar uma classe auxiliar separada (como as antigas Collections ou Arrays). Eles são chamados pelo nome da interface, por exemplo Comparator.comparing(...) e List.of(...), e não são herdados pelas classes que implementam a interface.
+
+Questão 2
+
+Uma interface é um contrato: diz o que um objeto faz, sem dizer como. Quando o código depende da interface e não da classe concreta:
+
+Baixo acoplamento: quem usa o objeto não conhece a implementação. Por isso dá para trocar a implementação sem alterar quem a usa 
+Extensão sem modificação: um comportamento novo vira uma classe nova que implementa a interface. O código existente e já testado não precisa ser editado 
+Testabilidade: nos testes, a implementação real (banco de dados, rede) pode ser substituída por uma implementação falsa (mock).
+Trabalho em paralelo: com o contrato definido, duas equipes conseguem desenvolver os dois lados ao mesmo tempo.
+
+Exemplo prático: imagine uma loja virtual com vários meios de pagamento.
+
+interface ProcessadorPagamento {
+    boolean pagar(double valor);
+}
+
+class PagamentoPix implements ProcessadorPagamento { ... }
+class PagamentoCartao implements ProcessadorPagamento { ... }
+
+class Checkout {
+    private final ProcessadorPagamento processador;
+
+    Checkout(ProcessadorPagamento processador) {   // recebe a interface
+        this.processador = processador;
+    }
+
+    void finalizarCompra(double total) {
+        processador.pagar(total);
+    }
+}
+
+Se o Checkout recebesse diretamente um PagamentoPix, aceitar boleto exigiria mudar o Checkout. Recebendo a interface, basta criar PagamentoBoleto implements ProcessadorPagamento e o Checkout continua igual. Nos testes, também dá para passar um processador falso que sempre retorna true, sem chamar nenhum banco de verdade. O mesmo raciocínio vale para repositórios de dados e para serviços de notificação.
 
 
 
